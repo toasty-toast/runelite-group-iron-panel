@@ -1,4 +1,4 @@
-# Group Iron Panel
+# Group Iron Panel [![Plugin Installs](http://img.shields.io/endpoint?url=https://i.pluginhub.info/shields/installs/plugin/group-iron-panel)](https://runelite.net/plugin-hub/toasty-toast) [![Plugin Rank](http://img.shields.io/endpoint?url=https://i.pluginhub.info/shields/rank/plugin/group-iron-panel)](https://runelite.net/plugin-hub)
 
 Group Iron Panel is a [RuneLite](https://runelite.net/) plugin that adds a new panel for viewing your Group Ironman group's skills and hiscores all in the same place.
 
