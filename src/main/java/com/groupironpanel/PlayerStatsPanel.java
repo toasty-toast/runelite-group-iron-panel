@@ -190,7 +190,7 @@ public class PlayerStatsPanel extends JPanel {
         builder.append("<html><body style = 'padding: 5px;color:#989898'>");
 
         if (skill == null) {
-            double combatLevel = Experience.getCombatLevel(
+            double combatLevel = Experience.getCombatLevelPrecise(
                     result.getAttack().getLevel(),
                     result.getStrength().getLevel(),
                     result.getDefence().getLevel(),
