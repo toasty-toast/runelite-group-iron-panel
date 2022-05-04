@@ -2,6 +2,7 @@ package com.groupironpanel;
 
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.hiscore.HiscoreEndpoint;
+import net.runelite.client.hiscore.HiscoreResult;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.PluginPanel;
 import net.runelite.client.util.ImageUtil;
@@ -16,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -100,6 +102,35 @@ public class GroupIronPanel extends PluginPanel {
      * Refreshes the hiscores for the group and displays them in the panel.
      */
     public void refreshPanel() {
-        playerStatsPanels.forEach(panel -> panel.refreshStats());
+        for (PlayerStatsPanel panel : playerStatsPanels) {
+            panel.clearStats();
+        }
+
+        List<CompletableFuture<HiscoreResult>> hiscoreFutures = playerStatsPanels
+                .stream()
+                .map(panel -> hiscoreClient.lookupAsync(panel.getPlayer(), HiscoreEndpoint.NORMAL))
+                .collect(Collectors.toList());
+
+        CompletableFuture.allOf(hiscoreFutures.toArray(new CompletableFuture<?>[0])).whenCompleteAsync((result, ex) -> {
+            List<HiscoreResult> results = hiscoreFutures.stream().map(future -> {
+                try {
+                    return future.get();
+                } catch (InterruptedException e) {
+                    return null;
+                } catch (ExecutionException e) {
+                    return null;
+                }
+            }).collect(Collectors.toList());
+
+            SwingUtilities.invokeLater(() -> {
+                for (int i = 0; i < playerStatsPanels.size(); i++) {
+                    HiscoreResult hiscoreResult = results.get(i);
+                    if (hiscoreResult == null) {
+                        continue;
+                    }
+                    playerStatsPanels.get(i).updateStats(hiscoreResult);
+                }
+            });
+        });
     }
 }

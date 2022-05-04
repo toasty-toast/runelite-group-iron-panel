@@ -44,61 +44,66 @@ public class PlayerStatsPanel extends JPanel {
     }
 
     /**
-     * Refreshes the stats on the panel from the hiscores.
+     * Clears the stats on the panel.
      */
-    public void refreshStats() {
-        usernameLabel.setText(username);
-
+    public void clearStats() {
         for (Map.Entry<HiscoreSkill, JLabel> entry : skillToLabel.entrySet()) {
             JLabel label = entry.getValue();
             if (label != null) {
                 label.setText("-");
             }
         }
+    }
 
-        hiscoreClient.lookupAsync(username, HiscoreEndpoint.NORMAL).whenCompleteAsync((result, ex) ->
-                SwingUtilities.invokeLater(() ->
-                {
-                    if (result == null || ex != null) {
-                        if (ex != null) {
-                            log.warn("Error fetching hiscore data for " + username + " " + ex.getMessage());
-                        }
-                        return;
-                    }
+    /**
+     * Updates the stats with a given hiscore result.
+     *
+     * @param playerResult     The hiscore result for the player displayed in this panel.
+     */
+    public void updateStats(HiscoreResult playerResult) {
+        if (playerResult == null) {
+            return;
+        }
 
-                    for (Map.Entry<HiscoreSkill, JLabel> entry : skillToLabel.entrySet()) {
-                        HiscoreSkill skill = entry.getKey();
-                        JLabel label = entry.getValue();
+        for (Map.Entry<HiscoreSkill, JLabel> entry : skillToLabel.entrySet()) {
+            HiscoreSkill skill = entry.getKey();
+            JLabel label = entry.getValue();
 
-                        if (label == null) {
-                            continue;
-                        }
+            if (label == null) {
+                continue;
+            }
 
-                        Skill resultSkill;
+            Skill resultSkill;
 
-                        if (skill == null) {
-                            int combatLevel = Experience.getCombatLevel(
-                                    result.getAttack().getLevel(),
-                                    result.getStrength().getLevel(),
-                                    result.getDefence().getLevel(),
-                                    result.getHitpoints().getLevel(),
-                                    result.getMagic().getLevel(),
-                                    result.getRanged().getLevel(),
-                                    result.getPrayer().getLevel()
-                            );
-                            label.setText(Integer.toString(combatLevel));
-                        } else if ((resultSkill = result.getSkill(skill)) != null) {
-                            final long experience = resultSkill.getExperience();
-                            if (experience > -1 && skill.getType() == HiscoreSkillType.SKILL) {
-                                label.setText(String.valueOf(Experience.getLevelForXp((int)experience)));
-                            } else {
-                                label.setText(String.valueOf(resultSkill.getLevel()));
-                            }
-                        }
+            if (skill == null) {
+                int combatLevel = Experience.getCombatLevel(
+                        playerResult.getAttack().getLevel(),
+                        playerResult.getStrength().getLevel(),
+                        playerResult.getDefence().getLevel(),
+                        playerResult.getHitpoints().getLevel(),
+                        playerResult.getMagic().getLevel(),
+                        playerResult.getRanged().getLevel(),
+                        playerResult.getPrayer().getLevel()
+                );
+                label.setText(Integer.toString(combatLevel));
+            } else if ((resultSkill = playerResult.getSkill(skill)) != null) {
+                final long experience = resultSkill.getExperience();
+                if (experience > -1 && skill.getType() == HiscoreSkillType.SKILL) {
+                    label.setText(String.valueOf(Experience.getLevelForXp((int) experience)));
+                } else {
+                    label.setText(String.valueOf(resultSkill.getLevel()));
+                }
+            }
 
-                        label.setToolTipText(buildSkillPanelTooltip(result, skill));
-                    }
-                }));
+            label.setToolTipText(buildSkillPanelTooltip(playerResult, skill));
+        }
+    }
+
+    /**
+     * Returns the name of the player represented by this stats panel.
+     */
+    public String getPlayer() {
+        return this.username;
     }
 
     /**
@@ -182,39 +187,39 @@ public class PlayerStatsPanel extends JPanel {
      * Builds an HTML tooltip for a single skill in the panel.
      * This logic is taken from the builtin Hiscore plugin.
      *
-     * @param result The hiscore result for the player.
-     * @param skill  The skill to build the tooltip for.
+     * @param playerResult     The hiscore result for the player.
+     * @param skill            The skill to build the tooltip for.
      */
-    private String buildSkillPanelTooltip(HiscoreResult result, HiscoreSkill skill) {
+    private String buildSkillPanelTooltip(HiscoreResult playerResult, HiscoreSkill skill) {
         StringBuilder builder = new StringBuilder();
         builder.append("<html><body style = 'padding: 5px;color:#989898'>");
 
         if (skill == null) {
             double combatLevel = Experience.getCombatLevelPrecise(
-                    result.getAttack().getLevel(),
-                    result.getStrength().getLevel(),
-                    result.getDefence().getLevel(),
-                    result.getHitpoints().getLevel(),
-                    result.getMagic().getLevel(),
-                    result.getRanged().getLevel(),
-                    result.getPrayer().getLevel()
+                    playerResult.getAttack().getLevel(),
+                    playerResult.getStrength().getLevel(),
+                    playerResult.getDefence().getLevel(),
+                    playerResult.getHitpoints().getLevel(),
+                    playerResult.getMagic().getLevel(),
+                    playerResult.getRanged().getLevel(),
+                    playerResult.getPrayer().getLevel()
             );
-            double combatExperience = result.getAttack().getExperience()
-                    + result.getStrength().getExperience() + result.getDefence().getExperience()
-                    + result.getHitpoints().getExperience() + result.getMagic().getExperience()
-                    + result.getRanged().getExperience() + result.getPrayer().getExperience();
+            double combatExperience = playerResult.getAttack().getExperience()
+                    + playerResult.getStrength().getExperience() + playerResult.getDefence().getExperience()
+                    + playerResult.getHitpoints().getExperience() + playerResult.getMagic().getExperience()
+                    + playerResult.getRanged().getExperience() + playerResult.getPrayer().getExperience();
             builder.append("<p><span style = 'color:white'>Combat</span></p>");
             builder.append("<p><span style = 'color:white'>Exact Combat Level:</span> " + QuantityFormatter.formatNumber(combatLevel) + "</p>");
             builder.append("<p><span style = 'color:white'>Experience:</span> " + QuantityFormatter.formatNumber(combatExperience) + "</p>");
         } else if (skill == HiscoreSkill.OVERALL) {
-            Skill overallSkill = result.getSkill(skill);
+            Skill overallSkill = playerResult.getSkill(skill);
             String rank = (overallSkill.getRank() == -1) ? "Unranked" : QuantityFormatter.formatNumber(overallSkill.getRank());
             String exp = (overallSkill.getExperience() == -1L) ? "Unranked" : QuantityFormatter.formatNumber(overallSkill.getExperience());
             builder.append("<p><span style = 'color:white'>" + skill.getName() + "</span></p>");
             builder.append("<p><span style = 'color:white'>Rank:</span> " + rank + "</p>");
             builder.append("<p><span style = 'color:white'>Experience:</span> " + exp + "</p>");
         } else {
-            Skill requestedSkill = result.getSkill(skill);
+            Skill requestedSkill = playerResult.getSkill(skill);
             final long experience = requestedSkill.getExperience();
 
             String rank = (requestedSkill.getRank() == -1) ? "Unranked" : QuantityFormatter.formatNumber(requestedSkill.getRank());
@@ -234,7 +239,7 @@ public class PlayerStatsPanel extends JPanel {
         }
 
         if (skill != null && skill.getType() == HiscoreSkillType.SKILL) {
-            long experience = result.getSkill(skill).getExperience();
+            long experience = playerResult.getSkill(skill).getExperience();
             if (experience >= 0) {
                 int currentXp = (int) experience;
                 int currentLevel = Experience.getLevelForXp(currentXp);
