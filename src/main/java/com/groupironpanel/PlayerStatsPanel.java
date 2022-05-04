@@ -74,6 +74,8 @@ public class PlayerStatsPanel extends JPanel {
                             continue;
                         }
 
+                        Skill resultSkill;
+
                         if (skill == null) {
                             int combatLevel = Experience.getCombatLevel(
                                     result.getAttack().getLevel(),
@@ -85,8 +87,13 @@ public class PlayerStatsPanel extends JPanel {
                                     result.getPrayer().getLevel()
                             );
                             label.setText(Integer.toString(combatLevel));
-                        } else {
-                            label.setText(String.valueOf(result.getSkill(skill).getLevel()));
+                        } else if ((resultSkill = result.getSkill(skill)) != null) {
+                            final long experience = resultSkill.getExperience();
+                            if (experience > -1 && skill.getType() == HiscoreSkillType.SKILL) {
+                                label.setText(String.valueOf(Experience.getLevelForXp((int)experience)));
+                            } else {
+                                label.setText(String.valueOf(resultSkill.getLevel()));
+                            }
                         }
 
                         label.setToolTipText(buildSkillPanelTooltip(result, skill));
