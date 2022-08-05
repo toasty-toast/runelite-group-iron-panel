@@ -143,9 +143,10 @@ public class GroupIronPanelPlugin extends Plugin {
             }
         }
 
-        log.info("Updating config automatically");
-        config.setGroupName(groupName);
-        config.setGroupMembers(Text.toCSV(groupMembers));
+        if (groupName != null && !groupName.isEmpty() && groupMembers.size() > 0) {
+            config.setGroupName(groupName);
+            config.setGroupMembers(Text.toCSV(groupMembers));
+        }
     }
 
     /**
