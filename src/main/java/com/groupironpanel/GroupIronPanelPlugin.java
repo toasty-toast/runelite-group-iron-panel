@@ -39,8 +39,6 @@ public class GroupIronPanelPlugin extends Plugin {
 
     private int autoDetectTickCooldown = 0;
 
-    private HiscoreClient hiscoreClient;
-
     private GroupIronPanel panel;
 
     private NavigationButton toolbarButton;
@@ -60,6 +58,9 @@ public class GroupIronPanelPlugin extends Plugin {
     @Inject
     private GroupIronPanelConfig config;
 
+    @Inject
+    private HiscoreClient hiscoreClient;
+
     @Provides
     GroupIronPanelConfig provideConfig(ConfigManager configManager) {
         return configManager.getConfig(GroupIronPanelConfig.class);
@@ -74,8 +75,6 @@ public class GroupIronPanelPlugin extends Plugin {
 
     @Override
     protected void startUp() throws Exception {
-        hiscoreClient = new HiscoreClient(okHttpClient);
-
         panel = new GroupIronPanel(hiscoreClient);
         final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "/GroupIron.png");
         toolbarButton = NavigationButton.builder()

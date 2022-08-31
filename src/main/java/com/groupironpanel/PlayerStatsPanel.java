@@ -77,13 +77,13 @@ public class PlayerStatsPanel extends JPanel {
 
             if (skill == null) {
                 int combatLevel = Experience.getCombatLevel(
-                        playerResult.getAttack().getLevel(),
-                        playerResult.getStrength().getLevel(),
-                        playerResult.getDefence().getLevel(),
-                        playerResult.getHitpoints().getLevel(),
-                        playerResult.getMagic().getLevel(),
-                        playerResult.getRanged().getLevel(),
-                        playerResult.getPrayer().getLevel()
+                        playerResult.getSkill(ATTACK).getLevel(),
+                        playerResult.getSkill(STRENGTH).getLevel(),
+                        playerResult.getSkill(DEFENCE).getLevel(),
+                        playerResult.getSkill(HITPOINTS).getLevel(),
+                        playerResult.getSkill(MAGIC).getLevel(),
+                        playerResult.getSkill(RANGED).getLevel(),
+                        playerResult.getSkill(PRAYER).getLevel()
                 );
                 label.setText(Integer.toString(combatLevel));
             } else if ((resultSkill = playerResult.getSkill(skill)) != null) {
@@ -196,18 +196,18 @@ public class PlayerStatsPanel extends JPanel {
 
         if (skill == null) {
             double combatLevel = Experience.getCombatLevelPrecise(
-                    playerResult.getAttack().getLevel(),
-                    playerResult.getStrength().getLevel(),
-                    playerResult.getDefence().getLevel(),
-                    playerResult.getHitpoints().getLevel(),
-                    playerResult.getMagic().getLevel(),
-                    playerResult.getRanged().getLevel(),
-                    playerResult.getPrayer().getLevel()
+                    playerResult.getSkill(ATTACK).getLevel(),
+                    playerResult.getSkill(STRENGTH).getLevel(),
+                    playerResult.getSkill(DEFENCE).getLevel(),
+                    playerResult.getSkill(HITPOINTS).getLevel(),
+                    playerResult.getSkill(MAGIC).getLevel(),
+                    playerResult.getSkill(RANGED).getLevel(),
+                    playerResult.getSkill(PRAYER).getLevel()
             );
-            double combatExperience = playerResult.getAttack().getExperience()
-                    + playerResult.getStrength().getExperience() + playerResult.getDefence().getExperience()
-                    + playerResult.getHitpoints().getExperience() + playerResult.getMagic().getExperience()
-                    + playerResult.getRanged().getExperience() + playerResult.getPrayer().getExperience();
+            double combatExperience = playerResult.getSkill(ATTACK).getExperience()
+                    + playerResult.getSkill(STRENGTH).getExperience() + playerResult.getSkill(DEFENCE).getExperience()
+                    + playerResult.getSkill(HITPOINTS).getExperience() + playerResult.getSkill(MAGIC).getExperience()
+                    + playerResult.getSkill(RANGED).getExperience() + playerResult.getSkill(PRAYER).getExperience();
             builder.append("<p><span style = 'color:white'>Combat</span></p>");
             builder.append("<p><span style = 'color:white'>Exact Combat Level:</span> " + QuantityFormatter.formatNumber(combatLevel) + "</p>");
             builder.append("<p><span style = 'color:white'>Experience:</span> " + QuantityFormatter.formatNumber(combatExperience) + "</p>");
