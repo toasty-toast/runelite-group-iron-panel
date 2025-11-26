@@ -27,7 +27,7 @@ public class PlayerStatsPanel extends JPanel {
             PRAYER, CRAFTING, FIREMAKING,
             MAGIC, FLETCHING, WOODCUTTING,
             RUNECRAFT, SLAYER, FARMING,
-            CONSTRUCTION, HUNTER
+            CONSTRUCTION, HUNTER, SAILING
     );
 
     private Map<HiscoreSkill, JLabel> skillToLabel = new HashMap<>();

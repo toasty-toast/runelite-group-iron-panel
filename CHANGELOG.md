@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.2.0
+
+Features
+* Add Sailing skill.
+
 ## 1.1.0
 
 Bug Fixes
