@@ -1,14 +1,11 @@
 package com.groupironpanel;
 
 import com.google.inject.Provides;
-
-import javax.inject.Inject;
-
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -21,6 +18,7 @@ import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.Text;
 import okhttp3.OkHttpClient;
 
+import javax.inject.Inject;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -111,7 +109,7 @@ public class GroupIronPanelPlugin extends Plugin {
      * This will only succeed if the group ironman tab is open.
      */
     private void tryAutoDetectGroupInformation() {
-        Widget groupNameContainerWidget = client.getWidget(WidgetID.GROUP_IRON_GROUP_ID, 1);
+        Widget groupNameContainerWidget = client.getWidget(InterfaceID.GIM_SIDEPANEL, 1);
         if (groupNameContainerWidget == null) {
             return;
         }
@@ -126,7 +124,7 @@ public class GroupIronPanelPlugin extends Plugin {
             }
         }
 
-        Widget groupMembersContainerWidget = client.getWidget(WidgetID.GROUP_IRON_GROUP_ID, 6);
+        Widget groupMembersContainerWidget = client.getWidget(InterfaceID.GIM_SIDEPANEL, 6);
         if (groupMembersContainerWidget == null) {
             return;
         }
